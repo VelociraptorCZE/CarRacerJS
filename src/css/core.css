@@ -1,0 +1,28 @@
+/**
+ * CarRacerJS
+ * Copyright (C) Simon Raichl 2018
+ * MIT License
+ */
+
+* {
+    margin: 0;
+    overflow: hidden;
+}
+
+canvas {
+    background: url(../../tex/road.svg) repeat-y;
+    background-size: cover;
+    width: 100vw;
+    animation: 2s road-anim infinite linear;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+
+.carracerjs-score {
+    font: 2rem Segoe UI, sans-serif;
+    margin: .5rem;
+    color: #fff;
+    text-shadow: 2px 2px 4px #000;
+}

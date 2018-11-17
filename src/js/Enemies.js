@@ -5,7 +5,6 @@
  */
 
 import Game                 from "./Game.js";
-import Canvas               from "./Canvas.js";
 import Bounds               from "./Bounds.js";
 import CanvasRender         from "./CanvasRender.js";
 import PlayerPositions      from "./PlayerPositions.js";

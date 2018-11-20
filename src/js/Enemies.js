@@ -11,7 +11,7 @@ import PlayerPositions      from "./PlayerPositions.js";
 import Service              from "./Service.js";
 
 export default class Enemies extends Service{
-    constructor(maxNumberOfEnemies = 10) {
+    constructor(maxNumberOfEnemies = 5) {
         super();
         this.car = {
             width: 110,
@@ -41,7 +41,7 @@ export default class Enemies extends Service{
         }
 
         for (let i = 0; i < this.enemies.length; i++) {
-            let currentY = this.enemies[i][1];
+            let currentY = this.enemies[i].y;
             currentY > Bounds.get().y2
                 ? this.enemies.splice(i, 1)
                 : !this.destroyed ? this.moveTo(i, currentY) : null;
@@ -51,24 +51,26 @@ export default class Enemies extends Service{
     }
 
     generateEnemy() {
-        try {
-            let id = this.getRandomNumber(-1, this.spawnPoints.length-1);
-            let y = -240;
-            this.enemies.forEach(enemy => (y + 400 > enemy[1]) ? y -= (this.car.height * 2) : null);
-            this.enemies.push([this.spawnPoints[id][0], y, this.spawnPoints[id][1] === 1 ? 10 : 4]);
-        }
-        catch{}
+        let id = this.getRandomNumber(-1, this.spawnPoints.length-1);
+        let y = -240;
+        this.enemies.forEach(enemy => (y + 512 > enemy.y) ? y -= (this.car.height * 2) : null);
+        this.enemies.push({
+            x: this.spawnPoints[id][0],
+            y: y,
+            speed: this.spawnPoints[id][1] === 1 ? 10 : 4,
+            direction: this.spawnPoints[id][1] === 1 ? "down" : "up"
+        });
     }
 
-    moveTo(index, currentY, coef = 1) {
-        this.enemies[index][1] = currentY + (this.enemies[index][2] * coef);
+    moveTo(index, current, coef = 1) {
+        this.enemies[index].y = current + (this.enemies[index].speed * coef);
     }
 
     checkCollision() {
         for (let i = 0; i < this.enemies.length; i++) {
             let enemy = this.enemies[i];
-            let x = this.getCondition(enemy[0], car.coords.x, this.car.width);
-            let y = this.getCondition(enemy[1], car.coords.y, this.car.height);
+            let x = this.getCondition(enemy.x, car.coords.x, this.car.width);
+            let y = this.getCondition(enemy.y, car.coords.y, this.car.height);
             if ((x && y) || new PlayerPositions().check()) {
                 new Game(true);
                 if (!this.destroyed) {

@@ -6,6 +6,7 @@
 
 import PlayerPositions from "./PlayerPositions.js";
 import GyroControl     from "./GyroControl.js";
+import Canvas          from "./Canvas.js";
 
 export default class Player extends GyroControl {
     constructor() {
@@ -21,6 +22,15 @@ export default class Player extends GyroControl {
     }
 
     initPlayer() {
+        Canvas.get().elem.addEventListener("touchmove", e => {
+            let localCoords = {
+                false: (window.innerWidth / 2 - e.touches[0].clientX) / -20,
+                true: 0
+            };
+
+            car.coords.x += localCoords[car.destroyed];
+        });
+
         window.addEventListener("keydown", e => {
             const localCoords = {
                 false: this.move(e),

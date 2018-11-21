@@ -5,10 +5,11 @@
  */
 
 import PlayerPositions from "./PlayerPositions.js";
-import CanvasRender from "./CanvasRender.js";
+import GyroControl     from "./GyroControl.js";
 
-export default class Player {
+export default class Player extends GyroControl {
     constructor() {
+        super();
         this.matrix = {
             "ArrowUp|KeyW":    {x: 0, y: -8},
             "ArrowDown|KeyS":  {x: 0, y: 8},
@@ -21,15 +22,21 @@ export default class Player {
 
     initPlayer() {
         window.addEventListener("keydown", e => {
-            const localCoords = car.destroyed
-                ? {x: 0, y: 0}
-                : this.matrix[Object.keys(this.matrix).filter(event => event.includes(e.code))[0]];
+            const localCoords = {
+                false: this.move(e),
+                true: {x: 0, y: 0}
+            };
+
             try {
-                car.coords.x += localCoords.x;
-                car.coords.y += localCoords.y;
+                car.coords.x += localCoords[car.destroyed].x;
+                car.coords.y += localCoords[car.destroyed].y;
                 new PlayerPositions().check();
             }
             catch {}
         });
+    }
+
+    move(e) {
+        return this.matrix[Object.keys(this.matrix).filter(event => event.includes(e.code))[0]];
     }
 }

@@ -53,12 +53,13 @@ export default class Enemies extends Service{
     generateEnemy() {
         let id = this.getRandomNumber(-1, this.spawnPoints.length-1);
         let y = -240;
+        let direction = this.spawnPoints[id][1] === 1;
         this.enemies.forEach(enemy => (y + 512 > enemy.y) ? y -= (this.car.height * 2) : null);
         this.enemies.push({
             x: this.spawnPoints[id][0],
             y: y,
-            speed: this.spawnPoints[id][1] === 1 ? 10 : 4,
-            direction: this.spawnPoints[id][1] === 1 ? "down" : "up"
+            speed: direction ? 10 : 4,
+            direction: direction ? "down" : "up"
         });
     }
 

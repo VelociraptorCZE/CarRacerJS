@@ -13,9 +13,11 @@ export default class Canvas {
     }
 
     checkCanvas(param) {
-        const height = Math.ceil(parseInt(window.getComputedStyle(Canvas.get().elem).height.replace("px", "")));
-        const elem = Canvas.get().anim_elem;
-        elem.innerHTML = elem.innerHTML.replace(/[0-9]+px/, `${param || height}px`);
+        if (!car.destroyed) {
+            const height = Math.ceil(parseInt(window.getComputedStyle(Canvas.get().elem).height.replace("px", "")));
+            const elem = Canvas.get().anim_elem;
+            elem.innerHTML = elem.innerHTML.replace(/[0-9]+px/, `${param || height}px`);
+        }
     }
 
     static get() {

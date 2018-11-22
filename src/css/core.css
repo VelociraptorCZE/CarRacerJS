@@ -11,7 +11,7 @@
 
 canvas {
     background: url(../../tex/road.svg) repeat-y;
-    background-size: cover;
+    background-size: contain;
     width: 100vw;
     animation: 2s road-anim infinite linear;
     position: absolute;

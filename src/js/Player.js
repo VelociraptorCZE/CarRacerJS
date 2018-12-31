@@ -5,12 +5,10 @@
  */
 
 import PlayerPositions from "./PlayerPositions.js";
-import GyroControl     from "./GyroControl.js";
 import Canvas          from "./Canvas.js";
 
-export default class Player extends GyroControl {
+export default class Player {
     constructor() {
-        super();
         this.matrix = {
             "ArrowUp|KeyW":    {x: 0, y: -8},
             "ArrowDown|KeyS":  {x: 0, y: 8},

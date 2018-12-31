@@ -21,6 +21,7 @@ export default class Enemies extends Service{
         this.maxNumberOfEnemies = maxNumberOfEnemies;
         this.spawnPoints = [[856, 0], [688, 0], [496, 1], [304, 1]];
         this.init();
+        this.canvasRender = new CanvasRender();
     }
 
     initNewGame() {
@@ -29,10 +30,11 @@ export default class Enemies extends Service{
     }
 
     init() {
-        setInterval(() => {
+        requestAnimationFrame(() => {
             this.setEnemies();
             this.checkCollision();
-        }, 20);
+            this.init();
+        });
     }
 
     setEnemies() {
@@ -47,7 +49,7 @@ export default class Enemies extends Service{
                 : !this.destroyed ? this.moveTo(i, currentY) : null;
         }
 
-        CanvasRender(this.enemies);
+        this.canvasRender.redraw(this.enemies);
     }
 
     generateEnemy() {

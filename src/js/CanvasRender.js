@@ -1,6 +1,6 @@
 /**
  * CarRacerJS
- * Copyright (C) Simon Raichl 2018
+ * Copyright (C) Simon Raichl 2018-2019
  * MIT License
  */
 
@@ -14,15 +14,31 @@ export default class CanvasRender {
             "up": Car.get("tex/car_enemy_up.svg"),
             "down": Car.get("tex/car_enemy_down.svg")
         };
+        this.explosion = {
+            img: Car.get("tex/explosion.svg"),
+            size: 128
+        };
     }
 
-    redraw(enemies) {
-        const { carEnemy, car } = this;
-        Canvas.get().context.clearRect(0, 0, Canvas.get().width, Canvas.get().height);
-        Canvas.get().context.drawImage(car, window.car.coords.x, window.car.coords.y);
+    redraw(enemies, destroyed) {
+        const { carEnemy, car, explosion } = this;
+        const c = window.car.coords;
+        const ctx = Canvas.get().context;
+        ctx.clearRect(0, 0, Canvas.get().width, Canvas.get().height);
+        ctx.drawImage(car, c.x, c.y);
+
         enemies.forEach(enemy => {
-            Canvas.get().context.drawImage(carEnemy[enemy.direction], enemy.x, enemy.y);
+            ctx.drawImage(carEnemy[enemy.direction], enemy.x, enemy.y);
         });
 
+        if (destroyed) {
+            this.explosion.size += .15;
+            ctx.globalCompositeOperation = "lighter";
+            ctx.drawImage(explosion.img, c.x, c.y - explosion.size / 3, explosion.size, explosion.size);
+            ctx.globalCompositeOperation = "source-over";
+        }
+        else {
+            this.explosion.size = 128;
+        }
     }
 }

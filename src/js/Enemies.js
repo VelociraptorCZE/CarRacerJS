@@ -1,6 +1,6 @@
 /**
  * CarRacerJS
- * Copyright (C) Simon Raichl 2018
+ * Copyright (C) Simon Raichl 2018-2019
  * MIT License
  */
 
@@ -10,7 +10,7 @@ import CanvasRender         from "./CanvasRender.js";
 import PlayerPositions      from "./PlayerPositions.js";
 import Service              from "./Service.js";
 
-export default class Enemies extends Service{
+export default class Enemies extends Service {
     constructor(maxNumberOfEnemies = 5) {
         super();
         this.car = {
@@ -49,11 +49,11 @@ export default class Enemies extends Service{
                 : !this.destroyed ? this.moveTo(i, currentY) : null;
         }
 
-        this.canvasRender.redraw(this.enemies);
+        this.canvasRender.redraw(this.enemies, this.destroyed);
     }
 
     generateEnemy() {
-        let id = this.getRandomNumber(-1, this.spawnPoints.length-1);
+        let id = this.getRandomNumber(-1, this.spawnPoints.length - 1);
         let y = -240;
         let direction = this.spawnPoints[id][1] === 1;
         this.enemies.forEach(enemy => (y + 512 > enemy.y) ? y -= (this.car.height * 2) : null);

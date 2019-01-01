@@ -4,18 +4,18 @@
  * MIT License
  */
 
-import Car from "./Car.js";
+import Texture from "./Texture.js";
 import Canvas from "./Canvas.js";
 
 export default class CanvasRender {
     constructor() {
-        this.car = Car.get("tex/car_player.svg");
+        this.car = Texture.get("tex/car_player.svg");
         this.carEnemy = {
-            "up": Car.get("tex/car_enemy_up.svg"),
-            "down": Car.get("tex/car_enemy_down.svg")
+            "up": Texture.get("tex/car_enemy_up.svg"),
+            "down": Texture.get("tex/car_enemy_down.svg")
         };
         this.explosion = {
-            img: Car.get("tex/explosion.svg"),
+            img: Texture.get("tex/explosion.svg"),
             size: 128
         };
     }

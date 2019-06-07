@@ -10,21 +10,11 @@ import ParticleEffect from "particleeffect";
 
 export default class CanvasRender {
     constructor() {
-<<<<<<< HEAD
         const { context } = Canvas.get();
-=======
->>>>>>> 1c5dcdabb98ba0eb67a817b8ee86e688f19e9a47
         this.car = Texture.get("tex/car_player.svg");
         this.carEnemy = {
             "up": Texture.get("tex/car_enemy_up.svg"),
             "down": Texture.get("tex/car_enemy_down.svg")
-<<<<<<< HEAD
-=======
-        };
-        this.explosion = {
-            img: Texture.get("tex/explosion.svg"),
-            size: 128
->>>>>>> 1c5dcdabb98ba0eb67a817b8ee86e688f19e9a47
         };
         this.explosion = new ParticleEffect(context);
         this.explosion.setOptions({

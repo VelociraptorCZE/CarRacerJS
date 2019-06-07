@@ -4,41 +4,51 @@
  * MIT License
  */
 
-import Car from "./Car.js";
+import Texture from "./Texture.js";
 import Canvas from "./Canvas.js";
+import ParticleEffect from "particleeffect";
 
 export default class CanvasRender {
     constructor() {
-        this.car = Car.get("tex/car_player.svg");
+        const { context } = Canvas.get();
+        this.car = Texture.get("tex/car_player.svg");
         this.carEnemy = {
-            "up": Car.get("tex/car_enemy_up.svg"),
-            "down": Car.get("tex/car_enemy_down.svg")
+            "up": Texture.get("tex/car_enemy_up.svg"),
+            "down": Texture.get("tex/car_enemy_down.svg")
         };
-        this.explosion = {
-            img: Car.get("tex/explosion.svg"),
-            size: 128
-        };
+        this.explosion = new ParticleEffect(context);
+        this.explosion.setOptions({
+            type: "explosion",
+            color: "#ff6e16",
+            clearCanvasOnRender: true
+        });
     }
 
     redraw(enemies, destroyed) {
         const { carEnemy, car, explosion } = this;
-        const c = window.car.coords;
-        const ctx = Canvas.get().context;
-        ctx.clearRect(0, 0, Canvas.get().width, Canvas.get().height);
-        ctx.drawImage(car, c.x, c.y);
+        const { x, y } = window.car.coords;
+        const { context, width, height } = Canvas.get();
+
+        if (!this.explosionCreated) {
+            context.clearRect(0, 0, width, height);
+        }
+
+        context.drawImage(car, x, y);
 
         enemies.forEach(enemy => {
-            ctx.drawImage(carEnemy[enemy.direction], enemy.x, enemy.y);
+            context.drawImage(carEnemy[enemy.direction], enemy.x, enemy.y);
         });
 
-        if (destroyed) {
-            this.explosion.size += .15;
-            ctx.globalCompositeOperation = "lighter";
-            ctx.drawImage(explosion.img, c.x, c.y - explosion.size / 3, explosion.size, explosion.size);
-            ctx.globalCompositeOperation = "source-over";
-        }
-        else {
-            this.explosion.size = 128;
+        if (destroyed && !this.explosionCalled) {
+            this.explosionCalled = true;
+            this.explosionCreated = true;
+            explosion.setOptions({
+                coords: [x, y]
+            });
+            explosion.create();
+            setTimeout(() => {
+                this.explosionCalled = false;
+            }, 2000);
         }
     }
 }

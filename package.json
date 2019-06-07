@@ -1,0 +1,22 @@
+{
+  "name": "carracerjs",
+  "version": "1.0.0",
+  "scripts": {
+    "update": "babel-upgrade --write",
+    "build": "npx webpack"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "7.4.4",
+    "babel-loader": "^8.0.0",
+    "babel-upgrade": "1.0.1",
+    "babelify": "10.0.0",
+    "uglifyjs-webpack-plugin": "2.1.2",
+    "webpack": "4.30.0",
+    "webpack-bundle-analyzer": "^3.3.2",
+    "webpack-cli": "3.2.3"
+  },
+  "dependencies": {
+    "particleeffect": "0.8.0"
+  }
+}

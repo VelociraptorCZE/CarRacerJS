@@ -4,50 +4,52 @@
  * MIT License
  */
 
-import Canvas from "./Canvas.js";
-
 export default class Game {
-    constructor(restart) {
+    onInit ({ PlayerCarInfo, GameCanvas, Enemies, CanvasRender }) {
+        this.playerCarInfo = PlayerCarInfo;
+        this.gameCanvas = GameCanvas;
+        this.enemies = Enemies;
+        this.canvasRender = CanvasRender;
         this.initScore();
-        if (restart) {
-            if (!car.destroyed) {
-                new Canvas().checkCanvas("0");
-                car.destroyed = true;
-                setTimeout(() => {
-                    this.resetData();
-                    new Canvas().checkCanvas();
-                }, 2000);
-            }
-        }
-        else {
-            this.resetData();
-            setInterval(() => {
-                if (!car.destroyed) {
-                    this.score.number += 1;
-                    this.score.elem.innerHTML = this.score.elem.innerHTML.replace(/[0-9]+/, this.score.number);
-                }
-                else {
-                    this.initScore();
-                }
-            }, 100);
-        }
+        this.initGame();
     }
 
-    initScore() {
+    initGame () {
+        this.resetData();
+        setInterval(() => {
+            if (!this.playerCarInfo.isDestroyed) {
+                this.score.number++;
+                this.score.elem.innerHTML = this.score.elem.innerHTML.replace(/[0-9]+/, this.score.number);
+            } else {
+                this.initScore();
+            }
+        }, 100);
+    }
+
+    initScore () {
         this.score = {
             number: 0,
-            elem: document.getElementById("js-game-score"),
+            elem: document.getElementById("js-game-score")
         };
     }
 
-    resetData() {
-        window.car = {
-            coords: {
-                x: 590,
-                y: 400
-            },
-            destroyed: false
-        };
+    restartGame () {
+        const { playerCarInfo } = this;
+
+        if (!playerCarInfo.isDestroyed) {
+            this.gameCanvas.handleCanvasHeight(0);
+            playerCarInfo.isDestroyed = true;
+            setTimeout(() => {
+                this.canvasRender.explosionCalled = false;
+                this.resetData();
+                this.enemies.restartEnemies();
+                this.gameCanvas.handleCanvasHeight();
+            }, 2000);
+        }
+    }
+
+    resetData () {
         this.initScore();
+        this.playerCarInfo.resetProps();
     }
 }

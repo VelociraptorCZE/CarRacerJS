@@ -5,40 +5,49 @@
  */
 
 import Texture from "./Texture.js";
-import Canvas from "./Canvas.js";
+import ParticleEffect from "particleeffect";
 
 export default class CanvasRender {
-    constructor() {
-        this.car = Texture.get("tex/car_player.svg");
-        this.carEnemy = {
-            "up": Texture.get("tex/car_enemy_up.svg"),
-            "down": Texture.get("tex/car_enemy_down.svg")
+    constructor () {
+        this.enemyCarTexture = {
+            up: Texture.getTextureFromFile("tex/car_enemy_up.svg"),
+            down: Texture.getTextureFromFile("tex/car_enemy_down.svg")
         };
-        this.explosion = {
-            img: Texture.get("tex/explosion.svg"),
-            size: 128
-        };
+
+        this.carTexture = Texture.getTextureFromFile("tex/car_player.svg");
     }
 
-    redraw(enemies, destroyed) {
-        const { carEnemy, car, explosion } = this;
-        const c = window.car.coords;
-        const ctx = Canvas.get().context;
-        ctx.clearRect(0, 0, Canvas.get().width, Canvas.get().height);
-        ctx.drawImage(car, c.x, c.y);
-
-        enemies.forEach(enemy => {
-            ctx.drawImage(carEnemy[enemy.direction], enemy.x, enemy.y);
+    onInit ({ PlayerCarInfo, Enemies, GameCanvas }) {
+        this.gameCanvas = GameCanvas;
+        this.enemies = Enemies;
+        this.playerCarInfo = PlayerCarInfo;
+        this.explosion = new ParticleEffect(this.gameCanvas.getCanvas().context);
+        this.explosion.setOptions({
+            type: "explosion",
+            colors: ["#ff6e16", "#ff6a09", "#da5501"],
+            clearCanvasOnRender: true
         });
+    }
 
-        if (destroyed) {
-            this.explosion.size += .15;
-            ctx.globalCompositeOperation = "lighter";
-            ctx.drawImage(explosion.img, c.x, c.y - explosion.size / 3, explosion.size, explosion.size);
-            ctx.globalCompositeOperation = "source-over";
+    redraw () {
+        const { enemyCarTexture, carTexture, explosion, enemies, playerCarInfo } = this;
+        const { x, y } = playerCarInfo.coords;
+        const { context, width, height } = this.gameCanvas.getCanvas();
+
+        if (!this.explosionCreated) {
+            context.clearRect(0, 0, width, height);
         }
-        else {
-            this.explosion.size = 128;
+
+        context.drawImage(carTexture, x, y);
+
+        enemies.enemyList.forEach(enemy => context.drawImage(enemyCarTexture[enemy.direction], enemy.x, enemy.y));
+
+        if (playerCarInfo.isDestroyed && !this.explosionCalled) {
+            this.gameCanvas.handleCanvasHeight(0);
+            this.explosionCalled = true;
+            this.explosionCreated = true;
+            explosion.setOptions({ coords: [x, y] });
+            explosion.create();
         }
     }
 }

@@ -1,0 +1,23 @@
+{
+  "name": "carracerjs",
+  "version": "1.0.0",
+  "scripts": {
+    "codefix": "prettierx \"./src/js/*.js\" --write --space-before-function-paren --list-different",
+    "update": "babel-upgrade --write",
+    "build": "npx webpack"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "7.4.4",
+    "babel-loader": "^8.0.0",
+    "babel-upgrade": "1.0.1",
+    "uglifyjs-webpack-plugin": "2.1.2",
+    "prettierx": "0.11.0",
+    "webpack": "4.41.2",
+    "webpack-cli": "3.3.10"
+  },
+  "dependencies": {
+    "particleeffect": "0.8.5",
+    "grumpydi": "1.0.0"
+  }
+}

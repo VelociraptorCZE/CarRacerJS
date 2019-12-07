@@ -4,15 +4,19 @@
  * MIT License
  */
 
-import Canvas from "./Canvas.js";
-
 export default class Bounds {
-    static get() {
+    onInit ({ GameCanvas }) {
+        this.gameCanvas = GameCanvas;
+    }
+
+    getBounds () {
+        const { elem } = this.gameCanvas.getCanvas();
+
         return {
-            x1: Canvas.get().width * 0.69,
-            x2: Canvas.get().height * 0.35,
+            x1: elem.width * 0.69,
+            x2: elem.height * 0.35,
             y1: -260,
-            y2: Canvas.get().height
+            y2: elem.height
         };
     }
 }

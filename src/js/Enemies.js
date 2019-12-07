@@ -4,85 +4,104 @@
  * MIT License
  */
 
-import Game                 from "./Game.js";
-import Bounds               from "./Bounds.js";
-import CanvasRender         from "./CanvasRender.js";
-import PlayerPositions      from "./PlayerPositions.js";
-import Service              from "./Service.js";
+export default class Enemies {
+    constructor () {
+        this.maxEnemies = 5;
+        this.spawnPoints = [
+            [856, 0],
+            [688, 0],
+            [496, 1],
+            [304, 1]
+        ];
 
-export default class Enemies extends Service {
-    constructor(maxNumberOfEnemies = 5) {
-        super();
-        this.car = {
-            width: 110,
-            height: 210,
-        };
-        this.initNewGame();
-        this.maxNumberOfEnemies = maxNumberOfEnemies;
-        this.spawnPoints = [[856, 0], [688, 0], [496, 1], [304, 1]];
-        this.init();
-        this.canvasRender = new CanvasRender();
+        this.restartEnemies();
     }
 
-    initNewGame() {
-        this.enemies = [];
-        this.destroyed = false;
+    restartEnemies () {
+        this.enemyList = [];
     }
 
-    init() {
-        requestAnimationFrame(() => {
-            this.setEnemies();
-            this.checkCollision();
-            this.init();
-        });
+    onInit ({ PlayerCarInfo, Bounds, CanvasRender, Game }) {
+        this.game = Game;
+        this.bounds = Bounds;
+        this.playerCarInfo = PlayerCarInfo;
+        this.canvasRender = CanvasRender;
     }
 
-    setEnemies() {
-        if (this.enemies.length <= this.maxNumberOfEnemies && this.getRandomNumber(0, 20) === 2) {
+    setEnemies () {
+        const { enemyList } = this;
+        let i = 0;
+
+        if (enemyList.length <= this.maxEnemies && this.getRandomNumber(0, 20) === 2) {
             this.generateEnemy();
         }
 
-        for (let i = 0; i < this.enemies.length; i++) {
-            let currentY = this.enemies[i].y;
-            currentY > Bounds.get().y2
-                ? this.enemies.splice(i, 1)
-                : !this.destroyed ? this.moveTo(i, currentY) : null;
+        for (const enemy of enemyList) {
+            const currentY = enemy.y;
+
+            if (!this.playerCarInfo.isDestroyed) {
+                this.moveTo(i, currentY);
+            }
+
+            if (currentY > this.bounds.getBounds().y2) {
+                enemyList.splice(i, 1);
+            }
+
+            ++i;
         }
 
-        this.canvasRender.redraw(this.enemies, this.destroyed);
+        this.canvasRender.redraw();
     }
 
-    generateEnemy() {
-        let id = this.getRandomNumber(-1, this.spawnPoints.length - 1);
-        let y = -240;
-        let direction = this.spawnPoints[id][1] === 1;
-        this.enemies.forEach(enemy => (y + 512 > enemy.y) ? y -= (this.car.height * 2) : null);
-        this.enemies.push({
-            x: this.spawnPoints[id][0],
-            y: y,
+    generateEnemy () {
+        const {
+            enemyList,
+            playerCarInfo: { carSize }
+        } = this;
+        const carOffset = 32;
+
+        const spawnPointId = this.getRandomNumber(-1, this.spawnPoints.length - 1);
+        const y = -carSize.height - 100;
+        const direction = this.spawnPoints[spawnPointId][1] === 1;
+
+        for (const enemy of enemyList) {
+            if (y + carSize.height + carOffset > enemy.y) {
+                return;
+            }
+        }
+
+        enemyList.push({
+            x: this.spawnPoints[spawnPointId][0],
+            y,
             speed: direction ? 10 : 4,
             direction: direction ? "down" : "up"
         });
     }
 
-    moveTo(index, current, coef = 1) {
-        this.enemies[index].y = current + (this.enemies[index].speed * coef);
+    moveTo (index, current, coef = 1) {
+        this.enemyList[index].y = current + this.enemyList[index].speed * coef;
     }
 
-    checkCollision() {
-        for (let i = 0; i < this.enemies.length; i++) {
-            let enemy = this.enemies[i];
-            let x = this.getCondition(enemy.x, car.coords.x, this.car.width);
-            let y = this.getCondition(enemy.y, car.coords.y, this.car.height);
-            if ((x && y) || new PlayerPositions().check()) {
-                new Game(true);
-                if (!this.destroyed) {
-                    this.destroyed = true;
-                    setTimeout(() => {
-                        this.initNewGame();
-                    }, 2000);
-                }
+    checkCollisionWithPlayer () {
+        const {
+            playerCarInfo: { carSize, coords },
+            enemyList
+        } = this;
+
+        for (const enemy of enemyList) {
+            const isCollidingOnX = this.isPlayerCollidingWithEnemy(enemy.x, coords.x, carSize.width);
+            const isCollidingOnY = this.isPlayerCollidingWithEnemy(enemy.y, coords.y, carSize.height);
+            if (isCollidingOnX && isCollidingOnY) {
+                this.game.restartGame();
             }
         }
+    }
+
+    isPlayerCollidingWithEnemy (enemy, coords, side) {
+        return coords >= enemy - side && coords <= enemy + side;
+    }
+
+    getRandomNumber (min, max) {
+        return Math.ceil(min + Math.random() * (max - min));
     }
 }

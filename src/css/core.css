@@ -10,7 +10,7 @@
 }
 
 body{
-    background: linear-gradient(to right, #4de810 0%, #feb906 20%, #282828 20%, #282828 80.25%, #feb906 80.25%,#4de810 100%);
+    background: url(../../tex/road.svg) repeat-y center / cover;
 }
 
 canvas {

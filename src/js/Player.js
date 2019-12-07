@@ -4,47 +4,49 @@
  * MIT License
  */
 
-import PlayerPositions from "./PlayerPositions.js";
-import Canvas          from "./Canvas.js";
-
 export default class Player {
-    constructor() {
-        this.matrix = {
-            "ArrowUp|KeyW":    {x: 0, y: -8},
-            "ArrowDown|KeyS":  {x: 0, y: 8},
-            "ArrowLeft|KeyA":  {x: -8, y: 0},
-            "ArrowRight|KeyD": {x: 8, y: 0}
+    onInit ({ PlayerCarInfo, GameCanvas, PlayerPosition }) {
+        this.playerCarInfo = PlayerCarInfo;
+        this.gameCanvas = GameCanvas;
+        this.playerPosition = PlayerPosition;
+        this.controls = {
+            "ArrowUp|KeyW": { x: 0, y: -8 },
+            "ArrowDown|KeyS": { x: 0, y: 8 },
+            "ArrowLeft|KeyA": { x: -8, y: 0 },
+            "ArrowRight|KeyD": { x: 8, y: 0 }
         };
 
         this.initPlayer();
     }
 
-    initPlayer() {
-        Canvas.get().elem.addEventListener("touchmove", e => {
-            let localCoords = {
+    initPlayer () {
+        const { playerCarInfo } = this;
+
+        this.gameCanvas.getCanvas().elem.addEventListener("touchmove", e => {
+            const localCoords = {
                 false: (window.innerWidth / 2 - e.touches[0].clientX) / -20,
                 true: 0
             };
 
-            car.coords.x += localCoords[car.destroyed];
+            playerCarInfo.coords.x += localCoords[playerCarInfo.isDestroyed];
         });
 
-        window.addEventListener("keydown", e => {
+        window.addEventListener("keypress", e => {
             const localCoords = {
                 false: this.move(e),
-                true: {x: 0, y: 0}
+                true: { x: 0, y: 0 }
             };
 
             try {
-                car.coords.x += localCoords[car.destroyed].x;
-                car.coords.y += localCoords[car.destroyed].y;
-                new PlayerPositions().check();
-            }
-            catch {}
+                playerCarInfo.coords.x += localCoords[playerCarInfo.isDestroyed].x;
+                playerCarInfo.coords.y += localCoords[playerCarInfo.isDestroyed].y;
+                this.playerPosition.checkPosition();
+            } catch {}
         });
     }
 
-    move(e) {
-        return this.matrix[Object.keys(this.matrix).filter(event => event.includes(e.code))[0]];
+    move ({ code }) {
+        const { controls } = this;
+        return controls[Object.keys(controls).filter(event => event.includes(code))[0]];
     }
 }

@@ -5,7 +5,7 @@
  */
 
 export default class Texture {
-    static get(src) {
+    static getTextureFromFile (src) {
         const tex = new Image(0, 0);
         tex.src = src;
         return tex;
